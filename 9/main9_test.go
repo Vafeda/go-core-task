@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-// Тест для функции GenerateNumbers
 func TestGenerateNumbers(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -26,7 +25,6 @@ func TestGenerateNumbers(t *testing.T) {
 			go GenerateNumbers(tt.count, ch, wg)
 			wg.Wait()
 
-			// Проверяем количество сгенерированных чисел
 			var count int
 			for range ch {
 				count++
@@ -39,7 +37,6 @@ func TestGenerateNumbers(t *testing.T) {
 	}
 }
 
-// Тест для функции ProcessChannels
 func TestProcessChannels(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -54,12 +51,12 @@ func TestProcessChannels(t *testing.T) {
 		{
 			name:   "Single value",
 			input:  []uint8{2},
-			output: []float64{8}, // 2^3 = 8
+			output: []float64{8},
 		},
 		{
 			name:   "Multiple values",
 			input:  []uint8{0, 1, 3, 5},
-			output: []float64{0, 1, 27, 125}, // 0^3=0, 1^3=1, 3^3=27, 5^3=125
+			output: []float64{0, 1, 27, 125},
 		},
 	}
 
@@ -70,23 +67,19 @@ func TestProcessChannels(t *testing.T) {
 			wg := &sync.WaitGroup{}
 			wg.Add(1)
 
-			// Заполняем входной канал
 			for _, v := range tt.input {
 				inChan <- v
 			}
 			close(inChan)
 
-			// Запускаем обработку
 			go ProcessChannels(inChan, outChan, wg)
 			wg.Wait()
 
-			// Собираем результаты
 			var results []float64
 			for v := range outChan {
 				results = append(results, v)
 			}
 
-			// Проверяем результаты
 			if len(results) != len(tt.output) {
 				t.Errorf("ProcessChannels() produced %d results, want %d", len(results), len(tt.output))
 				return
@@ -101,17 +94,16 @@ func TestProcessChannels(t *testing.T) {
 	}
 }
 
-// Тест для функции ProcessChannels с проверкой возведения в куб
 func TestProcessChannels_CubeCalculation(t *testing.T) {
 	testCases := []struct {
 		input    uint8
 		expected float64
 	}{
-		{0, 0},     // 0^3 = 0
-		{1, 1},     // 1^3 = 1
-		{2, 8},     // 2^3 = 8
-		{3, 27},    // 3^3 = 27
-		{10, 1000}, // 10^3 = 1000
+		{0, 0},
+		{1, 1}, 
+		{2, 8},  
+		{3, 27},  
+		{10, 1000},
 	}
 
 	for _, tc := range testCases {
@@ -121,15 +113,12 @@ func TestProcessChannels_CubeCalculation(t *testing.T) {
 			wg := &sync.WaitGroup{}
 			wg.Add(1)
 
-			// Отправляем одно значение
 			inChan <- tc.input
 			close(inChan)
 
-			// Запускаем обработку
 			go ProcessChannels(inChan, outChan, wg)
 			wg.Wait()
 
-			// Получаем результат
 			result := <-outChan
 
 			if result != tc.expected {
