@@ -50,7 +50,6 @@ func TestSemaphore_ConcurrentAccess(t *testing.T) {
 			sem.Add()
 			defer sem.Done()
 
-			// Имитация работы
 			time.Sleep(10 * time.Millisecond)
 		}(i)
 	}
